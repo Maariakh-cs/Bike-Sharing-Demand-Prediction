@@ -1,38 +1,39 @@
 # 🚲 Bike Sharing Demand Prediction using Machine Learning
 
-An end-to-end Machine Learning project that predicts **hourly bike rental demand** based on weather conditions, seasonal patterns, and time-related features. The project uses **Gradient Boosting Regression** to generate accurate predictions and is deployed as an interactive **Flask web application** for real-time forecasting.
+An end-to-end Machine Learning project that predicts hourly bike rental demand based on weather conditions, seasonal patterns, and temporal features. The project implements a complete ML pipeline—from data preprocessing and feature engineering to model training, evaluation, and deployment using a Flask web application.
 
 ---
 
 ## 📌 Overview
 
-Bike-sharing systems generate large amounts of usage data that can be leveraged to optimize operations and improve resource allocation. This project applies Machine Learning techniques to forecast bike rental demand by analyzing historical weather and temporal data.
+Accurate demand forecasting helps bike-sharing providers optimize fleet management, reduce operational costs, and improve customer satisfaction.
 
-The model was trained and evaluated on the **Kaggle Bike Sharing Demand dataset**, achieving excellent predictive performance.
+This project uses historical bike rental data along with weather and time-related variables to predict hourly demand. Multiple regression algorithms were evaluated, with **Gradient Boosting Regression** selected as the best-performing model.
 
 ---
 
 ## 🚀 Features
 
-* 📊 Exploratory Data Analysis (EDA)
-* 🧹 Data preprocessing and feature engineering
-* 🤖 Gradient Boosting Regression model training
-* 📈 Model evaluation and comparison with baseline algorithms
-* 🌐 Flask-based web application for real-time predictions
-* ⚡ Instant demand forecasting through a user-friendly interface
+- 📊 Comprehensive Exploratory Data Analysis (EDA)
+- 🧹 Data preprocessing and feature engineering
+- 🤖 Training and evaluation of multiple regression models
+- 📈 Performance comparison using regression metrics
+- 🏆 Gradient Boosting selected as the best-performing model
+- 🌐 Flask web application for real-time demand prediction
+- 💾 Model serialization for deployment
 
 ---
 
 ## 🛠️ Technologies Used
 
-* Python
-* Pandas
-* NumPy
-* Scikit-learn
-* Matplotlib
-* Seaborn
-* Flask
-* Joblib
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Matplotlib
+- Seaborn
+- Flask
+- Joblib
 
 ---
 
@@ -41,8 +42,9 @@ The model was trained and evaluated on the **Kaggle Bike Sharing Demand dataset*
 ```text
 Bike-Sharing-Demand-Prediction/
 │
-├── dataset/
-├── model/
+├── data/
+├── notebooks/
+├── models/
 ├── static/
 ├── templates/
 ├── app.py
@@ -53,43 +55,49 @@ Bike-Sharing-Demand-Prediction/
 
 ---
 
-## ⚙️ Machine Learning Workflow
+## ⚙️ Machine Learning Pipeline
 
 1. Data Collection
 2. Data Cleaning & Preprocessing
-3. Exploratory Data Analysis
+3. Exploratory Data Analysis (EDA)
 4. Feature Engineering
-5. Model Training
-6. Model Evaluation
-7. Model Serialization using Joblib
-8. Flask Web Application Deployment
+5. Train-Test Split
+6. Model Training
+7. Model Evaluation
+8. Best Model Selection
+9. Flask Deployment
+10. Real-Time Prediction
 
 ---
 
-## 📈 Model Performance
+## 🤖 Models Evaluated
 
-### 🏆 Best Model: Gradient Boosting Regressor
-
-| Metric | Value |
-|----------|-------|
-| R² Score | **0.9391** |
-| RMSE | *(add if available)* |
-| MAE | *(add if available)* |
-
-The Gradient Boosting model outperformed:
 - Linear Regression
 - Decision Tree Regressor
 - Random Forest Regressor
+- Gradient Boosting Regressor
+
+🏆 **Best Performing Model:** Gradient Boosting Regressor
+
+---
+
+## 📊 Model Performance
+
+| Metric | Value |
+|----------|-------|
+| **R² Score** | **0.9391** |
+
+The Gradient Boosting model demonstrated superior predictive performance and was selected for deployment.
 
 ---
 
 ## 💡 Key Highlights
 
-* Built a complete end-to-end Machine Learning pipeline.
-* Achieved an **R² score of 0.9391** using Gradient Boosting.
-* Performed feature engineering using weather and temporal variables.
-* Deployed the trained model as a **Flask web application** for real-time demand prediction.
-* Demonstrates practical experience in Machine Learning model development and deployment.
+- Built a complete end-to-end Machine Learning regression pipeline.
+- Performed data preprocessing, feature engineering, and exploratory data analysis.
+- Compared multiple regression algorithms to identify the best-performing model.
+- Achieved an **R² Score of 0.9391** using **Gradient Boosting Regression**.
+- Deployed the trained model as a **Flask web application** for real-time bike demand prediction.
 
 ---
 
@@ -113,7 +121,7 @@ cd Bike-Sharing-Demand-Prediction
 pip install -r requirements.txt
 ```
 
-### Run the Flask application
+### Run the application
 
 ```bash
 python app.py
@@ -127,19 +135,34 @@ http://127.0.0.1:5000
 
 ---
 
-## 📊 Dataset
+## 📚 Dataset
 
-This project uses the **Bike Sharing Demand** dataset from Kaggle, containing historical information on bike rentals along with weather and time-related attributes used for demand forecasting.
+The project uses a bike-sharing dataset containing historical rental records and environmental factors such as:
+
+- Season
+- Weather conditions
+- Temperature
+- Humidity
+- Wind speed
+- Date and time attributes
+
+These features are used to predict hourly bike rental demand.
 
 ---
 
 ## 🔮 Future Improvements
 
-* Hyperparameter optimization
-* Integration with XGBoost and LightGBM models
-* Cloud deployment (Render/AWS/Azure)
-* Interactive dashboard for demand visualization
-* REST API for external integrations
+- Hyperparameter optimization
+- XGBoost and LightGBM implementation
+- Interactive dashboard for demand visualization
+- REST API integration
+- Cloud deployment using Render or AWS
+
+---
+
+## ⚠️ Disclaimer
+
+This project was developed for educational and research purposes as part of a Machine Learning internship. The predictions are intended for demonstration and analytical use and should be validated before deployment in production environments.
 
 ---
 
@@ -147,11 +170,9 @@ This project uses the **Bike Sharing Demand** dataset from Kaggle, containing hi
 
 **Maaria Khan**
 
-* GitHub: https://github.com/Maariakh-cs
-* LinkedIn: https://www.linkedin.com/in/maariakh-cs/
+- GitHub: https://github.com/Maariakh-cs
+- LinkedIn: https://www.linkedin.com/in/maariakh-cs/
 
 ---
 
-## ⭐ Support
-
-If you found this project useful, consider giving it a ⭐ on GitHub.
+⭐ If you found this project useful, consider giving it a star on GitHub!
