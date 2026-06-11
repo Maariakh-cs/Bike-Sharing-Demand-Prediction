@@ -70,14 +70,16 @@ Bike-Sharing-Demand-Prediction/
 
 ### 🏆 Best Model: Gradient Boosting Regressor
 
-* **R² Score:** **0.9391**
-* Outperformed multiple baseline models including:
+| Metric | Value |
+|----------|-------|
+| R² Score | **0.9391** |
+| RMSE | *(add if available)* |
+| MAE | *(add if available)* |
 
-  * Linear Regression
-  * Decision Tree Regressor
-  * Random Forest Regressor
-
-The final model was selected based on superior predictive accuracy and generalization performance.
+The Gradient Boosting model outperformed:
+- Linear Regression
+- Decision Tree Regressor
+- Random Forest Regressor
 
 ---
 
