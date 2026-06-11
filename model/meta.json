@@ -1,0 +1,73 @@
+{
+  "best_model": "Gradient Boosting",
+  "r2_score": 0.93913600169778,
+  "features": [
+    "season",
+    "yr",
+    "mnth",
+    "hr",
+    "holiday",
+    "weekday",
+    "workingday",
+    "weathersit",
+    "temp",
+    "atemp",
+    "hum",
+    "windspeed",
+    "cnt_lag_1h",
+    "cnt_lag_24h",
+    "cnt_rolling_3h",
+    "cnt_rolling_24h",
+    "is_peak_hour",
+    "is_weekend",
+    "temp_hum"
+  ],
+  "model_results": {
+    "Linear Regression": {
+      "MAE": 36.89,
+      "RMSE": 45.77,
+      "R2": 0.8671
+    },
+    "Decision Tree": {
+      "MAE": 43.7,
+      "RMSE": 55.71,
+      "R2": 0.8031
+    },
+    "Random Forest": {
+      "MAE": 33.42,
+      "RMSE": 42.72,
+      "R2": 0.8842
+    },
+    "Gradient Boosting": {
+      "MAE": 24.56,
+      "RMSE": 30.97,
+      "R2": 0.9391
+    }
+  },
+  "feature_importance": {
+    "cnt_rolling_3h": 0.5776,
+    "temp": 0.1007,
+    "weathersit": 0.0962,
+    "season": 0.0558,
+    "is_peak_hour": 0.0409,
+    "cnt_lag_1h": 0.0247,
+    "hum": 0.0236,
+    "hr": 0.0207,
+    "atemp": 0.019,
+    "yr": 0.0189,
+    "workingday": 0.0117,
+    "windspeed": 0.0039,
+    "cnt_rolling_24h": 0.003,
+    "cnt_lag_24h": 0.0014,
+    "temp_hum": 0.001,
+    "mnth": 0.0003,
+    "is_weekend": 0.0003,
+    "weekday": 0.0002,
+    "holiday": 0.0001
+  },
+  "target_stats": {
+    "min": 1,
+    "max": 743,
+    "mean": 297.2
+  }
+}

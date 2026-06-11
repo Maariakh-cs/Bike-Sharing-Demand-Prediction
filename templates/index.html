@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bike Sharing Demand Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #0a0e17;
+    --surface:  #111827;
+    --card:     #161e2e;
+    --border:   #1e2d45;
+    --accent:   #3ee8b5;
+    --accent2:  #6c63ff;
+    --text:     #e2e8f0;
+    --muted:    #64748b;
+    --danger:   #ef4444;
+    --warn:     #f59e0b;
+    --info:     #3b82f6;
+    --success:  #10b981;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── Grid background ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(62,232,181,.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(62,232,181,.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none; z-index: 0;
+  }
+
+  /* ── Header ── */
+  header {
+    position: relative; z-index: 10;
+    padding: 0 2rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,14,23,.85);
+    backdrop-filter: blur(12px);
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 1.1rem;
+    display: flex; align-items: center; gap: 10px;
+    letter-spacing: -.02em;
+  }
+  .logo-icon {
+    width: 32px; height: 32px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .badge {
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem; letter-spacing: .08em;
+    background: rgba(62,232,181,.1); color: var(--accent);
+    border: 1px solid rgba(62,232,181,.2);
+    padding: 3px 8px; border-radius: 20px;
+    text-transform: uppercase;
+  }
+
+  /* ── Hero ── */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 4rem 1rem 2.5rem;
+  }
+  .hero-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: .7rem; letter-spacing: .2em; text-transform: uppercase;
+    color: var(--accent); margin-bottom: 1rem;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800; line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    margin-bottom: .75rem;
+  }
+  .hero p {
+    color: var(--muted); font-size: 1rem; max-width: 500px; margin: 0 auto;
+  }
+
+  /* ── Stats bar ── */
+  .stats-bar {
+    display: flex; justify-content: center; gap: 2px;
+    padding: 0 1rem 2rem;
+    position: relative; z-index: 1;
+    flex-wrap: wrap;
+  }
+  .stat-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: .72rem;
+    background: var(--card);
+    border: 1px solid var(--border);
+    padding: 6px 14px; border-radius: 20px;
+    display: flex; align-items: center; gap: 6px;
+    color: var(--muted);
+  }
+  .stat-pill strong { color: var(--accent); font-size: .85rem; }
+
+  /* ── Layout ── */
+  .main {
+    position: relative; z-index: 1;
+    max-width: 1100px; margin: 0 auto;
+    padding: 0 1.5rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 1.5rem;
+  }
+  @media(max-width:800px){ .main { grid-template-columns: 1fr; } }
+
+  /* ── Card ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 1.5rem;
+  }
+  .card-title {
+    font-family: 'Syne', sans-serif;
+    font-size: .8rem; font-weight: 700;
+    letter-spacing: .1em; text-transform: uppercase;
+    color: var(--muted); margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .card-title::before {
+    content: ''; display: inline-block;
+    width: 3px; height: 14px;
+    background: var(--accent); border-radius: 2px;
+  }
+
+  /* ── Form grid ── */
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: .72rem; font-weight: 500;
+    color: var(--muted); text-transform: uppercase; letter-spacing: .06em;
+  }
+  .field select, .field input {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem;
+    outline: none;
+    transition: border-color .2s, box-shadow .2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field select { cursor: pointer; }
+  .field select:focus, .field input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(62,232,181,.12);
+  }
+  /* range slider */
+  .field input[type=range] {
+    padding: 0; border: none; background: none;
+    cursor: pointer; height: 28px;
+    box-shadow: none;
+  }
+  .range-row { display: flex; justify-content: space-between; }
+  .range-val {
+    font-family: 'DM Mono', monospace;
+    font-size: .75rem; color: var(--accent);
+  }
+
+  .predict-btn {
+    width: 100%; margin-top: 1.25rem;
+    padding: 14px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none; border-radius: 12px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700; font-size: 1rem;
+    color: #0a0e17; cursor: pointer;
+    transition: opacity .2s, transform .15s;
+    letter-spacing: .03em;
+  }
+  .predict-btn:hover  { opacity: .92; transform: translateY(-1px); }
+  .predict-btn:active { transform: translateY(0); }
+  .predict-btn:disabled { opacity: .5; cursor: not-allowed; }
+
+  /* ── Result panel ── */
+  .result-card {
+    position: sticky; top: 20px;
+    display: flex; flex-direction: column; gap: 1.25rem;
+  }
+
+  .result-display {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px; padding: 1.5rem;
+    min-height: 180px;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    transition: border-color .4s;
+  }
+  .result-display.active { border-color: var(--accent); }
+
+  .result-label {
+    font-family: 'DM Mono', monospace;
+    font-size: .68rem; letter-spacing: .15em;
+    text-transform: uppercase; color: var(--muted);
+    margin-bottom: .5rem;
+  }
+  .result-number {
+    font-family: 'Syne', sans-serif;
+    font-size: 5rem; font-weight: 800;
+    line-height: 1;
+    background: linear-gradient(135deg, #fff, var(--accent));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    transition: all .4s;
+  }
+  .result-unit {
+    font-size: .8rem; color: var(--muted); margin-top: .25rem;
+  }
+  .result-level {
+    display: inline-block;
+    margin-top: .75rem;
+    font-family: 'DM Mono', monospace; font-size: .7rem;
+    padding: 4px 12px; border-radius: 20px;
+    font-weight: 500; letter-spacing: .08em;
+  }
+  .result-tip {
+    margin-top: .6rem; font-size: .8rem; color: var(--muted);
+    max-width: 240px; line-height: 1.5;
+  }
+  .idle-icon { font-size: 2.5rem; margin-bottom: .5rem; opacity: .3; }
+
+  /* ── Gauge bar ── */
+  .gauge-wrap { width: 100%; }
+  .gauge-track {
+    width: 100%; height: 6px;
+    background: var(--border); border-radius: 3px;
+    overflow: hidden;
+  }
+  .gauge-fill {
+    height: 100%; border-radius: 3px;
+    width: 0%; transition: width .6s cubic-bezier(.4,0,.2,1), background .4s;
+  }
+  .gauge-labels {
+    display: flex; justify-content: space-between;
+    font-family: 'DM Mono', monospace; font-size: .6rem; color: var(--muted);
+    margin-top: 4px;
+  }
+
+  /* ── Model metrics ── */
+  .metrics-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: .75rem;
+  }
+  .metric-cell {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px; padding: .75rem 1rem;
+  }
+  .metric-name {
+    font-family: 'DM Mono', monospace;
+    font-size: .62rem; color: var(--muted); text-transform: uppercase;
+    letter-spacing: .08em; margin-bottom: 3px;
+  }
+  .metric-val {
+    font-family: 'Syne', sans-serif;
+    font-size: 1.2rem; font-weight: 700; color: var(--accent);
+  }
+  .metric-model { grid-column: span 2; }
+
+  /* ── Model comparison table ── */
+  .model-table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  .model-table th {
+    font-family: 'DM Mono', monospace; font-size: .62rem;
+    text-transform: uppercase; letter-spacing: .08em;
+    color: var(--muted); text-align: left;
+    padding: 6px 10px; border-bottom: 1px solid var(--border);
+  }
+  .model-table td { padding: 8px 10px; border-bottom: 1px solid rgba(30,45,69,.6); }
+  .model-table tr.best td { color: var(--accent); font-weight: 500; }
+  .model-table tr:last-child td { border: none; }
+  .r2-bar {
+    display: inline-block; height: 4px; border-radius: 2px;
+    background: var(--accent); vertical-align: middle; margin-left: 6px;
+  }
+
+  /* ── Feature importance ── */
+  .fi-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .fi-name {
+    font-family: 'DM Mono', monospace; font-size: .68rem;
+    color: var(--muted); width: 130px; flex-shrink: 0;
+  }
+  .fi-track { flex: 1; height: 4px; background: var(--border); border-radius: 2px; }
+  .fi-fill { height: 100%; border-radius: 2px; background: linear-gradient(90deg, var(--accent2), var(--accent)); }
+  .fi-pct { font-family: 'DM Mono', monospace; font-size: .62rem; color: var(--muted); width: 36px; text-align: right; }
+
+  /* ── Loader ── */
+  .spinner {
+    width: 28px; height: 28px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    display: none;
+    margin: 0 auto;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ── Footer ── */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border);
+    font-family: 'DM Mono', monospace;
+    font-size: .65rem; color: var(--muted);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-icon">🚲</div>
+    BikeDemand<span style="color:var(--accent)">AI</span>
+  </div>
+  <span class="badge">ML Internship · Movidu Technology</span>
+</header>
+
+<div class="hero">
+  <div class="hero-tag">// Gradient Boosting · R² {{ "%.4f"|format(meta.r2_score) }}</div>
+  <h1>Bike Sharing<br>Demand Prediction</h1>
+  <p>Predict hourly bicycle rental demand using weather, time, and seasonal features.</p>
+</div>
+
+<div class="stats-bar">
+  <div class="stat-pill">Best Model <strong>{{ meta.best_model }}</strong></div>
+  <div class="stat-pill">R² <strong>{{ "%.4f"|format(meta.r2_score) }}</strong></div>
+  <div class="stat-pill">MAE <strong>{{ meta.model_results[meta.best_model].MAE }}</strong></div>
+  <div class="stat-pill">RMSE <strong>{{ meta.model_results[meta.best_model].RMSE }}</strong></div>
+  <div class="stat-pill">Avg demand <strong>{{ meta.target_stats.mean }}</strong></div>
+</div>
+
+<div class="main">
+
+  <!-- ── Left: input form ── -->
+  <div>
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Time &amp; Date</div>
+      <div class="form-grid">
+        <div class="field">
+          <label>Hour of Day</label>
+          <select id="hr">
+            {% for h in range(24) %}
+            <option value="{{ h }}" {% if h==8 %}selected{% endif %}>
+              {{ "%02d:00"|format(h) }}
+            </option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>Day of Week</label>
+          <select id="weekday">
+            <option value="0">Sunday</option>
+            <option value="1" selected>Monday</option>
+            <option value="2">Tuesday</option>
+            <option value="3">Wednesday</option>
+            <option value="4">Thursday</option>
+            <option value="5">Friday</option>
+            <option value="6">Saturday</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Month</label>
+          <select id="mnth">
+            {% for m, name in [(1,'January'),(2,'February'),(3,'March'),(4,'April'),(5,'May'),(6,'June'),(7,'July'),(8,'August'),(9,'September'),(10,'October'),(11,'November'),(12,'December')] %}
+            <option value="{{ m }}" {% if m==5 %}selected{% endif %}>{{ name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="field">
+          <label>Year</label>
+          <select id="yr">
+            <option value="0">Year 1 (2011)</option>
+            <option value="1" selected>Year 2 (2012)</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Season</label>
+          <select id="season">
+            <option value="1">🌱 Spring</option>
+            <option value="2" selected>☀️ Summer</option>
+            <option value="3">🍂 Fall</option>
+            <option value="4">❄️ Winter</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Holiday</label>
+          <select id="holiday">
+            <option value="0" selected>No</option>
+            <option value="1">Yes</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:1.25rem">
+      <div class="card-title">Weather Conditions</div>
+      <div class="form-grid">
+        <div class="field" style="grid-column:span 2">
+          <label>Weather Situation</label>
+          <select id="weathersit">
+            <option value="1" selected>🌤 Clear / Partly Cloudy</option>
+            <option value="2">🌫 Mist / Cloudy</option>
+            <option value="3">🌧 Light Rain / Snow</option>
+            <option value="4">⛈ Heavy Rain / Fog</option>
+          </select>
+        </div>
+        <div class="field">
+          <div class="range-row">
+            <label>Temperature (°C)</label>
+            <span class="range-val" id="tempVal">20°C</span>
+          </div>
+          <input type="range" id="temp" min="0" max="41" value="20"
+                 oninput="document.getElementById('tempVal').textContent=this.value+'°C'">
+        </div>
+        <div class="field">
+          <div class="range-row">
+            <label>Feels Like (°C)</label>
+            <span class="range-val" id="atempVal">22°C</span>
+          </div>
+          <input type="range" id="atemp" min="0" max="50" value="22"
+                 oninput="document.getElementById('atempVal').textContent=this.value+'°C'">
+        </div>
+        <div class="field">
+          <div class="range-row">
+            <label>Humidity (%)</label>
+            <span class="range-val" id="humVal">55%</span>
+          </div>
+          <input type="range" id="hum" min="0" max="100" value="55"
+                 oninput="document.getElementById('humVal').textContent=this.value+'%'">
+        </div>
+        <div class="field">
+          <div class="range-row">
+            <label>Wind Speed (km/h)</label>
+            <span class="range-val" id="windVal">15 km/h</span>
+          </div>
+          <input type="range" id="windspeed" min="0" max="67" value="15"
+                 oninput="document.getElementById('windVal').textContent=this.value+' km/h'">
+        </div>
+      </div>
+    </div>
+
+    <button class="predict-btn" id="predictBtn" onclick="predict()">
+      ⚡ Predict Demand
+    </button>
+  </div>
+
+  <!-- ── Right: results ── -->
+  <div class="result-card">
+
+    <!-- Prediction output -->
+    <div class="result-display" id="resultDisplay">
+      <div class="idle-icon">🚲</div>
+      <div class="result-label">Awaiting prediction</div>
+      <div style="color:var(--muted);font-size:.8rem">Set conditions and click predict</div>
+    </div>
+
+    <!-- Gauge -->
+    <div class="card" id="gaugeCard" style="display:none">
+      <div class="card-title">Demand Level</div>
+      <div class="gauge-wrap">
+        <div class="gauge-track"><div class="gauge-fill" id="gaugeFill"></div></div>
+        <div class="gauge-labels"><span>0</span><span>250</span><span>500</span><span>750</span><span>977</span></div>
+      </div>
+    </div>
+
+    <!-- Model metrics -->
+    <div class="card">
+      <div class="card-title">Model Performance</div>
+      <div class="metrics-grid">
+        <div class="metric-cell metric-model">
+          <div class="metric-name">Best Algorithm</div>
+          <div class="metric-val" style="font-size:.95rem">{{ meta.best_model }}</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-name">R² Score</div>
+          <div class="metric-val">{{ "%.4f"|format(meta.r2_score) }}</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-name">MAE</div>
+          <div class="metric-val">{{ meta.model_results[meta.best_model].MAE }}</div>
+        </div>
+        <div class="metric-cell">
+          <div class="metric-name">RMSE</div>
+          <div class="metric-val">{{ meta.model_results[meta.best_model].RMSE }}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Model comparison -->
+    <div class="card">
+      <div class="card-title">Model Comparison</div>
+      <table class="model-table">
+        <thead>
+          <tr><th>Model</th><th>R²</th><th>MAE</th></tr>
+        </thead>
+        <tbody>
+          {% for mname, mvals in meta.model_results.items() %}
+          <tr {% if mname == meta.best_model %}class="best"{% endif %}>
+            <td>{{ mname }}</td>
+            <td>
+              {{ mvals.R2 }}
+              <span class="r2-bar" style="width:{{ (mvals.R2 * 60)|int }}px"></span>
+            </td>
+            <td>{{ mvals.MAE }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Feature importance -->
+    {% if meta.feature_importance %}
+    <div class="card">
+      <div class="card-title">Feature Importance</div>
+      {% set top_fi = meta.feature_importance.items()|list %}
+      {% for fname, fval in top_fi[:8] %}
+      <div class="fi-row">
+        <div class="fi-name">{{ fname }}</div>
+        <div class="fi-track"><div class="fi-fill" style="width:{{ (fval / top_fi[0][1] * 100)|int }}%"></div></div>
+        <div class="fi-pct">{{ (fval*100)|round(1) }}%</div>
+      </div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+  </div>
+</div>
+
+<footer>
+  Bike Sharing Demand Prediction · Machine Learning Internship · Movidu Technology Pvt Ltd
+  &nbsp;|&nbsp; Model: {{ meta.best_model }} · R²={{ "%.4f"|format(meta.r2_score) }}
+</footer>
+
+<script>
+async function predict() {
+  const btn = document.getElementById('predictBtn');
+  const display = document.getElementById('resultDisplay');
+  btn.disabled = true;
+  btn.textContent = 'Predicting…';
+
+  const payload = {
+    hr:         document.getElementById('hr').value,
+    weekday:    document.getElementById('weekday').value,
+    mnth:       document.getElementById('mnth').value,
+    yr:         document.getElementById('yr').value,
+    season:     document.getElementById('season').value,
+    holiday:    document.getElementById('holiday').value,
+    weathersit: document.getElementById('weathersit').value,
+    temp:       document.getElementById('temp').value,
+    atemp:      document.getElementById('atemp').value,
+    hum:        document.getElementById('hum').value,
+    windspeed:  document.getElementById('windspeed').value,
+  };
+
+  try {
+    const res = await fetch('/predict', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error);
+
+    // Animate number
+    display.classList.add('active');
+    display.innerHTML = `
+      <div class="result-label">Predicted Rentals</div>
+      <div class="result-number" id="rNum">0</div>
+      <div class="result-unit">bicycles / hour</div>
+      <span class="result-level" style="background:${data.color}22;color:${data.color};border:1px solid ${data.color}44">
+        ${data.level}
+      </span>
+      <div class="result-tip">${data.tip}</div>
+    `;
+
+    // Count-up animation
+    const target = data.prediction;
+    let current = 0;
+    const step = Math.max(1, Math.round(target / 40));
+    const timer = setInterval(() => {
+      current = Math.min(current + step, target);
+      document.getElementById('rNum').textContent = current;
+      if (current >= target) clearInterval(timer);
+    }, 25);
+
+    // Gauge
+    document.getElementById('gaugeCard').style.display = 'block';
+    const pct = Math.min((data.prediction / 977) * 100, 100);
+    const fill = document.getElementById('gaugeFill');
+    fill.style.width = '0%';
+    fill.style.background = data.color;
+    setTimeout(() => fill.style.width = pct + '%', 50);
+
+  } catch(e) {
+    display.innerHTML = `<div style="color:var(--danger)">Error: ${e.message}</div>`;
+  }
+
+  btn.disabled = false;
+  btn.textContent = '⚡ Predict Demand';
+}
+</script>
+</body>
+</html>
